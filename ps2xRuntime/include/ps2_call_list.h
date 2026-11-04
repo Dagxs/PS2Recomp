@@ -540,6 +540,9 @@
     X(sceSifLoadElf)                          \
     X(sceSifLoadElfPart)                      \
     X(sceSifLoadFileReset)                    \
+    X(sceSifSearchModuleByName)               \
+    X(sceSifSearchModuleByAddress)            \
+    X(sceSifUnloadModule)                     \
     X(sceSifLoadIopHeap)                      \
     X(sceSifLoadModuleBuffer)                 \
     X(sceSifRebootIop)                        \

@@ -547,6 +547,30 @@ namespace ps2_stubs
         setReturnS32(ctx, 0);
     }
 
+    // No LOADFILE RPC server is emulated, so the guest versions of these spin in
+    // _lf_bind forever. Answer them here: modules are never found by search
+    // (KE_UNKNOWN_MODULE), which makes games skip optional ones such as "hdd".
+    void sceSifSearchModuleByName(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime)
+    {
+        (void)rdram;
+        (void)runtime;
+        setReturnS32(ctx, -202);
+    }
+
+    void sceSifSearchModuleByAddress(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime)
+    {
+        (void)rdram;
+        (void)runtime;
+        setReturnS32(ctx, -202);
+    }
+
+    void sceSifUnloadModule(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime)
+    {
+        (void)rdram;
+        (void)runtime;
+        setReturnS32(ctx, -202);
+    }
+
     void sceSifLoadIopHeap(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime)
     {
         setReturnS32(ctx, 0);
