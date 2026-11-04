@@ -1109,8 +1109,22 @@ bool PS2Runtime::registerFunction(uint32_t address, RecompiledFunction func)
     return replaceFunction(address, func);
 }
 
+namespace
+{
+    PS2OverlayResolver g_overlayResolver = nullptr;
+}
+
+void ps2SetOverlayResolver(PS2OverlayResolver resolver)
+{
+    g_overlayResolver = resolver;
+}
+
 bool PS2Runtime::hasFunction(uint32_t address) const
 {
+    if (g_overlayResolver)
+    {
+        g_overlayResolver(const_cast<PS2Memory &>(m_memory).getRDRAM(), address);
+    }
     uint32_t slot = 0u;
     return generatedFunctionTableSlot(address, slot) && g_ps2RecompiledFunctionTable[slot] != nullptr;
 }
@@ -1137,6 +1151,11 @@ const char *describeGuestBranchKind(PS2Runtime::GuestBranchKind kind)
 PS2Runtime::RecompiledFunction PS2Runtime::lookupFunction(uint32_t address)
 {
     pushDispatchPc(address);
+
+    if (g_overlayResolver)
+    {
+        g_overlayResolver(m_memory.getRDRAM(), address);
+    }
 
     uint32_t slot = 0u;
     if (generatedFunctionTableSlot(address, slot))

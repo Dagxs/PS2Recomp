@@ -551,4 +551,10 @@ extern const uint32_t g_ps2RecompiledFunctionTableEnd;
 extern const uint32_t g_ps2RecompiledFunctionTableSlotCount;
 extern PS2Runtime::RecompiledFunction g_ps2RecompiledFunctionTable[];
 
+// Optional hook for games that load code overlays at runtime. Called before
+// every function-table lookup; it can swap table entries to match whichever
+// overlay is currently in guest memory. Installed by generated overlay code.
+using PS2OverlayResolver = void (*)(uint8_t *rdram, uint32_t address);
+void ps2SetOverlayResolver(PS2OverlayResolver resolver);
+
 #endif // PS2_RUNTIME_H
