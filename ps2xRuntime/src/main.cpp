@@ -226,6 +226,41 @@ int main(int argc, char *argv[])
             return 1;
         }
 
+        // Disc image: argv[2] if given, otherwise the first .iso next to the ELF.
+        {
+            PS2Runtime::IoPaths ioPaths = PS2Runtime::getIoPaths();
+            std::filesystem::path isoPath;
+            if (argc >= 3 && argv[2] && argv[2][0] != '\0')
+            {
+                isoPath = argv[2];
+            }
+            else
+            {
+                std::error_code isoEc;
+                for (const auto &entry : std::filesystem::directory_iterator(ioPaths.elfDirectory, isoEc))
+                {
+                    std::string ext = entry.path().extension().string();
+                    std::ranges::transform(ext, ext.begin(), [](unsigned char c)
+                                           { return static_cast<char>(std::tolower(c)); });
+                    if (entry.is_regular_file() && ext == ".iso")
+                    {
+                        isoPath = entry.path();
+                        break;
+                    }
+                }
+            }
+            if (!isoPath.empty())
+            {
+                ioPaths.cdImage = isoPath;
+                PS2Runtime::setIoPaths(ioPaths);
+                std::cout << "Using disc image: " << isoPath.string() << std::endl;
+            }
+            else
+            {
+                std::cout << "No disc image found; reading loose files next to the ELF." << std::endl;
+            }
+        }
+
         runtime.run();
 
 #ifdef _DEBUG
