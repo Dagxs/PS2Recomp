@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Common.h"
 #include "Pad.h"
 
@@ -860,4 +861,89 @@ namespace ps2_stubs
         g_padOverrideEnabled = false;
         g_padOverrideState = PadInputState{};
     }
+
+    // ---- libpad2 / libdbc (used by e.g. Kingdom Hearts) --------------------
+    // The real libraries talk to DBCMAN/SIO2 on the IOP; here they are answered
+    // from the same host input as libpad. One DualShock 2 on socket 0.
+
+    void sceDbcInit(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime)
+    {
+        (void)rdram;
+        (void)runtime;
+        setReturnS32(ctx, 1);
+    }
+
+    void scePad2Init(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime)
+    {
+        (void)rdram;
+        (void)runtime;
+        setReturnS32(ctx, 1);
+    }
+
+    void scePad2End(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime)
+    {
+        (void)rdram;
+        (void)runtime;
+        setReturnS32(ctx, 1);
+    }
+
+    void scePad2CreateSocket(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime)
+    {
+        (void)rdram;
+        (void)runtime;
+        static int s_nextSocket = 0;
+        setReturnS32(ctx, s_nextSocket++);
+    }
+
+    void scePad2DeleteSocket(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime)
+    {
+        (void)rdram;
+        (void)runtime;
+        setReturnS32(ctx, 1);
+    }
+
+    void scePad2GetState(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime)
+    {
+        (void)rdram;
+        (void)runtime;
+        setReturnS32(ctx, 1); // stable / connected
+    }
+
+    void scePad2GetButtonProfile(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime)
+    {
+        (void)runtime;
+        uint8_t *profile = getMemPtr(rdram, getRegU32(ctx, 5));
+        if (!profile)
+        {
+            setReturnS32(ctx, -1);
+            return;
+        }
+        // DualShock 2: every digital button, both sticks and pressure buttons.
+        std::memset(profile, 0xFF, 4);
+        setReturnS32(ctx, 4);
+    }
+
+    void scePad2Read(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime)
+    {
+        const int socket = static_cast<int>(getRegU32(ctx, 4));
+        uint8_t *out = getMemPtr(rdram, getRegU32(ctx, 5));
+        uint8_t frame[32]{};
+        if (!out || !readPadPortData(socket, 0, runtime, frame, 0u))
+        {
+            setReturnS32(ctx, -1);
+            return;
+        }
+        // libpad frame: [0]=status [1]=mode [2..3]=buttons [4..7]=sticks [8..19]=pressure.
+        // libpad2 data drops the 2-byte header.
+        std::memcpy(out, frame + 2, 18);
+        setReturnS32(ctx, 18);
+    }
+
+    void sceVibSetActParam(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime)
+    {
+        (void)rdram;
+        (void)runtime;
+        setReturnS32(ctx, 1);
+    }
+
 }

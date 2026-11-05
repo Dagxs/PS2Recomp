@@ -37,6 +37,15 @@ namespace ps2_stubs
     void scePadSetVrefParam(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime);
     void scePadSetWarningLevel(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime);
     void scePadStateIntToStr(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime);
+    void sceDbcInit(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime);
+    void scePad2Init(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime);
+    void scePad2End(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime);
+    void scePad2CreateSocket(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime);
+    void scePad2DeleteSocket(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime);
+    void scePad2GetState(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime);
+    void scePad2GetButtonProfile(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime);
+    void scePad2Read(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime);
+    void sceVibSetActParam(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime);
 
     static constexpr size_t kPadDebugPortCount = 2u;
     static constexpr size_t kPadDebugSlotCount = 1u;
