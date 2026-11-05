@@ -19,5 +19,7 @@ namespace ps2diag
     inline std::atomic<uint64_t> referSemaNoWait{0}; // ... that reported 0 waiting threads
     inline std::atomic<uint64_t> signalSema{0};      // (i)SignalSema calls
 
+    inline std::atomic<uint64_t> dmaByChannel[16]{}; // DMA starts by channel ((base>>12)&0xF): 8=VIF0 9=VIF1 A=GIF B=IPU
+
     inline void bump(std::atomic<uint64_t> &c) { c.fetch_add(1, std::memory_order_relaxed); }
 }

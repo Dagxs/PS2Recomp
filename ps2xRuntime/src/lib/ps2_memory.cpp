@@ -1306,6 +1306,8 @@ bool PS2Memory::writeIORegister(uint32_t address, uint32_t value)
             const uint32_t madr = m_ioRegisters[channelBase + 0x10];
             const uint32_t qwc = m_ioRegisters[channelBase + 0x20];
             m_dmaStartCount.fetch_add(1, std::memory_order_relaxed);
+            ps2diag::bump(ps2diag::dmaByChannel[(channelBase >> 12) & 0xFu]);
+            if (channelBase == 0x1000B400u) ps2diag::bump(ps2diag::dmaByChannel[0]); // slot 0 = IPU_TO
 
             if (tryProcessScratchpadDma(channelBase, value))
             {
