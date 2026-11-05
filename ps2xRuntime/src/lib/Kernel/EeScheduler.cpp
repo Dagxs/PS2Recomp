@@ -1,4 +1,5 @@
 #include "runtime/ee_scheduler.h"
+#include "runtime/ps2_diag_counters.h"
 
 #include "ps2_log.h"
 #include "ps2_runtime_macros.h"
@@ -865,6 +866,7 @@ int EeScheduler::deleteSemaphore(int id, bool interruptSafe)
 
 int EeScheduler::signalSemaphore(int id, bool interruptSafe)
 {
+    ps2diag::bump(ps2diag::signalSema);
     assertExecutor();
     EeSemaphore *object = semaphore(id);
     if (!object)
@@ -1892,6 +1894,7 @@ void EeScheduler::processEvent(const EeEvent &event)
         if (m_gsVSyncCallback != 0u && m_runtime.hasFunction(m_gsVSyncCallback))
         {
             GuestInvocation invocation{};
+            ps2diag::bump(ps2diag::vsyncCbQueued);
             invocation.kind = GuestInvocationKind::GsCallback;
             invocation.context.pc = m_gsVSyncCallback;
             SET_GPR_U32(&invocation.context, 4, static_cast<uint32_t>(m_vsyncTick));

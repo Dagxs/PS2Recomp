@@ -1,4 +1,5 @@
 #include "Common.h"
+#include "runtime/ps2_diag_counters.h"
 #include "Sync.h"
 #include "runtime/ee_scheduler.h"
 
@@ -141,6 +142,9 @@ namespace ps2_syscalls
         status->max_count = semaphore->maxCount;
         status->init_count = semaphore->initCount;
         status->wait_threads = static_cast<int>(semaphore->waiters.size());
+        ps2diag::bump(ps2diag::referSema);
+        if (semaphore->waiters.empty())
+            ps2diag::bump(ps2diag::referSemaNoWait);
         status->attr = semaphore->attr;
         status->option = semaphore->option;
         setReturnS32(ctx, KE_OK);

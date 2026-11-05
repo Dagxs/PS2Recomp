@@ -14,5 +14,10 @@ namespace ps2diag
     inline std::atomic<uint64_t> gsVertexKick{0};    // GS vertex kicks
     inline std::atomic<uint64_t> gsDrawKick{0};      // GS vertex kicks that draw
 
+    inline std::atomic<uint64_t> vsyncCbQueued{0};   // GS VSync callbacks queued
+    inline std::atomic<uint64_t> referSema{0};       // (i)ReferSemaStatus calls
+    inline std::atomic<uint64_t> referSemaNoWait{0}; // ... that reported 0 waiting threads
+    inline std::atomic<uint64_t> signalSema{0};      // (i)SignalSema calls
+
     inline void bump(std::atomic<uint64_t> &c) { c.fetch_add(1, std::memory_order_relaxed); }
 }

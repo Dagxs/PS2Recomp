@@ -2445,6 +2445,10 @@ void PS2Runtime::run()
                                                << " xgkick=" << ps2diag::vu1Xgkick.load()
                                                << " vtx=" << ps2diag::gsVertexKick.load()
                                                << " draw=" << ps2diag::gsDrawKick.load()
+                                               << " vcb=" << ps2diag::vsyncCbQueued.load()
+                                               << " refer=" << ps2diag::referSema.load()
+                                               << " refer0=" << ps2diag::referSemaNoWait.load()
+                                               << " sig=" << ps2diag::signalSema.load()
                                                << std::endl);
 
             }
