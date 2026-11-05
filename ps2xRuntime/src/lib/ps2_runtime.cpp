@@ -1,4 +1,5 @@
 #include "ps2_runtime.h"
+#include "runtime/ps2_diag_counters.h"
 #include "ps2_log.h"
 #include "ps2_stubs.h"
 #include "ps2_syscalls.h"
@@ -2435,6 +2436,15 @@ void PS2Runtime::run()
                                                << " gif=" << curGif
                                                << " gsw=" << curGs
                                                << " vif=" << curVif
+                                               << std::endl);
+                RUNTIME_LOG("[diag] v1q=" << ps2diag::vif1DmaQueued.load()
+                                               << " v1run=" << ps2diag::vif1Processed.load()
+                                               << " mscal=" << ps2diag::vif1Mscal.load()
+                                               << " direct=" << ps2diag::vif1Direct.load()
+                                               << " unpack=" << ps2diag::vif1Unpack.load()
+                                               << " xgkick=" << ps2diag::vu1Xgkick.load()
+                                               << " vtx=" << ps2diag::gsVertexKick.load()
+                                               << " draw=" << ps2diag::gsDrawKick.load()
                                                << std::endl);
 
             }

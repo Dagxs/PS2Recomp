@@ -1,4 +1,5 @@
 #include "runtime/ps2_memory.h"
+#include "runtime/ps2_diag_counters.h"
 #include "runtime/ps2_address.h"
 #include "runtime/gs/gs_frontend.h"
 #include "ps2_log.h"
@@ -1325,7 +1326,7 @@ bool PS2Memory::writeIORegister(uint32_t address, uint32_t value)
                     if (channelBase == 0x1000A000u)
                         m_pendingGifTransfers.push_back(pt);
                     else if (channelBase == 0x10009000u)
-                        m_pendingVif1Transfers.push_back(pt);
+                        { m_pendingVif1Transfers.push_back(pt); ps2diag::bump(ps2diag::vif1DmaQueued); }
                     else if (channelBase == 0x10008000u)
                         m_pendingVif0Transfers.push_back(pt);
                 };
@@ -1541,7 +1542,7 @@ bool PS2Memory::writeIORegister(uint32_t address, uint32_t value)
                         }
                         else if (channelBase == 0x10009000u)
                         {
-                            m_pendingVif1Transfers.push_back(std::move(pt));
+                            { m_pendingVif1Transfers.push_back(std::move(pt)); ps2diag::bump(ps2diag::vif1DmaQueued); }
                         }
                         else if (channelBase == 0x10008000u)
                         {

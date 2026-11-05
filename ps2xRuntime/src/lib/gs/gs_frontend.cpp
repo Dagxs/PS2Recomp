@@ -1,4 +1,5 @@
 #include "runtime/gs/gs_frontend.h"
+#include "runtime/ps2_diag_counters.h"
 #include "runtime/gs/gs_cpu_backend.h"
 #include "ps2_log.h"
 #include "runtime/ps2_memory.h"
@@ -1527,6 +1528,9 @@ void GS::writeRegisterUnlocked(uint8_t regAddr, uint64_t value)
 
 void GS::vertexKick(bool drawing)
 {
+    ps2diag::bump(ps2diag::gsVertexKick);
+    if (drawing)
+        ps2diag::bump(ps2diag::gsDrawKick);
     ++m_vtxCount;
     ++m_vtxIndex;
 

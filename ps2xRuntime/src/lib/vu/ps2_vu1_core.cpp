@@ -1,4 +1,5 @@
 #include "runtime/ps2_vu1.h"
+#include "runtime/ps2_diag_counters.h"
 #include "runtime/gs/ps2_gif_arbiter.h"
 #include "runtime/gs/gs_frontend.h"
 #include "runtime/ps2_memory.h"
@@ -932,6 +933,7 @@ void VU1Interpreter::startXgkick(uint32_t qwordAddress)
         return;
 
     const uint32_t sourceAddress = (qwordAddress * 16u) % m_activeVuDataSize;
+    ps2diag::bump(ps2diag::vu1Xgkick);
     m_xgkick = {};
     m_xgkick.active = true;
     m_xgkick.sourceAddress = sourceAddress;

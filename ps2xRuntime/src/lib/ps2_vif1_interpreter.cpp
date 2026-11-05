@@ -1,5 +1,6 @@
 // Based on Blackline Interactive implementation
 #include "runtime/ps2_memory.h"
+#include "runtime/ps2_diag_counters.h"
 #include <cstring>
 
 enum VIFCmd : uint8_t
@@ -297,6 +298,7 @@ void PS2Memory::processVIF1Data(uint32_t srcPhys, uint32_t sizeBytes)
 
 void PS2Memory::processVIF1Data(const uint8_t *data, uint32_t sizeBytes)
 {
+    ps2diag::bump(ps2diag::vif1Processed);
     if (sizeBytes == 0u)
         return;
 
@@ -402,6 +404,7 @@ void PS2Memory::processVIF1Data(const uint8_t *data, uint32_t sizeBytes)
         }
         else if (opcode == VIF_MSCAL || opcode == VIF_MSCALF)
         {
+            ps2diag::bump(ps2diag::vif1Mscal);
             uint32_t startPC = (uint32_t)imm * 8u;
 
             const uint32_t runTop = vif1_regs.tops & 0x3FFu;
@@ -487,6 +490,7 @@ void PS2Memory::processVIF1Data(const uint8_t *data, uint32_t sizeBytes)
         }
         else if (opcode == VIF_DIRECT || opcode == VIF_DIRECTHL)
         {
+            ps2diag::bump(ps2diag::vif1Direct);
             uint32_t qwCount = imm;
             if (qwCount == 0)
                 qwCount = 65536;
@@ -542,6 +546,7 @@ void PS2Memory::processVIF1Data(const uint8_t *data, uint32_t sizeBytes)
             }
             int bitsPerVector = (vl == 3 && vn == 3) ? 16 : (components * bitsPerComponent);
             uint32_t bytesPerVector = (bitsPerVector + 7) / 8;
+            ps2diag::bump(ps2diag::vif1Unpack);
             // UNPACK semantics: NUM is 8-bit and NUM==0 means 256 vectors (writes).
             const uint32_t writeVectorCount = (num == 0u) ? 256u : static_cast<uint32_t>(num);
 
