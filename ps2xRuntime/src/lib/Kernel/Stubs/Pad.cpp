@@ -892,7 +892,24 @@ namespace ps2_stubs
         (void)rdram;
         (void)runtime;
         static int s_nextSocket = 0;
-        setReturnS32(ctx, s_nextSocket++);
+        const int socket = s_nextSocket++;
+        // libpad2 has no separate port-open step: a socket is a ready DualShock 2
+        // in analog mode with pressure buttons. Mark the matching port open so
+        // readPadPortData() serves it.
+        {
+            std::lock_guard<std::mutex> lock(g_padStateMutex);
+            if (PadPortState *portState = lookupPadPortStateLocked(socket, 0))
+            {
+                portState->open = true;
+                portState->analogMode = true;
+                portState->pressureEnabled = true;
+                portState->buttonMask = 0xFFFFu;
+                portState->dmaAddr = 0u;
+                portState->reqState = 0u;
+                portState->transientState = 0u;
+            }
+        }
+        setReturnS32(ctx, socket);
     }
 
     void scePad2DeleteSocket(uint8_t *rdram, R5900Context *ctx, PS2Runtime *runtime)

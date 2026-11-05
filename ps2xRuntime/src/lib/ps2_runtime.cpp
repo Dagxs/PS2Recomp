@@ -2449,6 +2449,11 @@ void PS2Runtime::run()
                                                << " refer=" << ps2diag::referSema.load()
                                                << " refer0=" << ps2diag::referSemaNoWait.load()
                                                << " sig=" << ps2diag::signalSema.load()
+                                               << std::hex
+                                               << " peek[2c5968]=0x" << static_cast<uint32_t>(m_memory.getRDRAM()[0x2C5968])
+                                               << " peek[63f248]=0x" << *reinterpret_cast<const uint32_t *>(m_memory.getRDRAM() + 0x63F248)
+                                               << " peek[2c5ad0]=0x" << *reinterpret_cast<const uint16_t *>(m_memory.getRDRAM() + 0x2C5AD0)
+                                               << std::dec
                                                << std::endl);
 
             }
